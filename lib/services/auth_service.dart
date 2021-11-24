@@ -31,4 +31,9 @@ class AuthService extends ChangeNotifier {
       return ('Error en el servidor, intentelo de nuevo');
     }
   }
+
+  Future logout() async {
+    await storage.delete(key: 'token');
+    return;
+  }
 }

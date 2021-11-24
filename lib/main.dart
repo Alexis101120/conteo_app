@@ -11,6 +11,7 @@ class AppState extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthService()),
+        ChangeNotifierProvider(create: (_) => TiendaService()),
       ],
       child: MyApp(),
     );
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Conteo App',
       initialRoute: 'login',
       routes: {'login': (_) => LoginScreen(), 'home': (_) => HomeScreen()},
