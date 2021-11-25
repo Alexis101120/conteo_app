@@ -50,7 +50,7 @@ class _LoginForm extends StatelessWidget {
               decoration: InputDecorations.authInputDecoration(
                   hintText: 'Ingrese usuario',
                   labelText: 'Usuario',
-                  prefixIcon: Icons.account_balance_outlined),
+                  prefixIcon: Icons.account_circle),
               onChanged: (value) => loginForm.username = value,
               validator: (value) {
                 return (value != null && !value.isEmpty)
@@ -103,7 +103,6 @@ class _LoginForm extends StatelessWidget {
                         if (resp == null) {
                           Navigator.pushReplacementNamed(context, 'home');
                         } else {
-                          print(resp);
                           NotificationsService.showSnackbar(resp);
                           // showTopSnackBar(
                           //   context,

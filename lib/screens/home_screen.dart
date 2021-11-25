@@ -3,6 +3,7 @@ import 'package:conteo_app/services/services.dart';
 import 'package:conteo_app/widgets/tienda_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -12,31 +13,33 @@ class HomeScreen extends StatelessWidget {
 
     if (tiendaService.isLoading == true) {
       return const LoadingScreen();
-    } else {
-      return Scaffold(
-          appBar: AppBar(
-            title: Text('Tiendas'),
-            actions: [
-              IconButton(
-                  onPressed: () async {
-                    await authService.logout();
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, 'login', (Route<dynamic> route) => true);
-                  },
-                  icon: Icon(Icons.login_outlined))
-            ],
-          ),
-          body: RefreshIndicator(
-            onRefresh: tiendaService.loadTiendas,
-            child: ListView.builder(
-              itemCount: tiendaService.tiendas.length,
-              itemBuilder: (BuildContext context, int index) => GestureDetector(
-                onTap: () {},
-                child: TiendaCard(tienda: tiendaService.tiendas[index]),
-              ),
-            ),
-          ));
     }
-    return Container();
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Tiendas'),
+          actions: [
+            IconButton(
+                onPressed: () async {
+                  await authService.logout();
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, 'login', (Route<dynamic> route) => true);
+                },
+                icon: Icon(Icons.login_outlined))
+          ],
+        ),
+        body: RefreshIndicator(
+          onRefresh: tiendaService.loadTiendas,
+          child: ListView.builder(
+            itemCount: tiendaService.tiendas.length,
+            itemBuilder: (BuildContext context, int index) => GestureDetector(
+              onTap: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setInt('Tienda', tiendaService.tiendas[index].id);
+                Navigator.pushNamed(context, 'inventarios');
+              },
+              child: TiendaCard(tienda: tiendaService.tiendas[index]),
+            ),
+          ),
+        ));
   }
 }

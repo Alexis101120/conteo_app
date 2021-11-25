@@ -14,12 +14,14 @@ class AuthService extends ChangeNotifier {
       };
 
       final url = Uri.parse('http://192.168.0.11:9090/api/Acceso/LogIn');
-      final resp = await http.post(url,
-          headers: {'Content-type': 'application/json'},
-          body: json.encode(authData));
+      final resp = await http.post(url, body: json.encode(authData), headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      });
+      if (resp.statusCode != 200) {
+        return 'Usuario y/o contraseña incorrectos';
+      }
       final Map<String, dynamic> decodeResp = json.decode(resp.body);
-      print('Respuesta del servidor ${decodeResp}');
-
       if (decodeResp.containsKey('token')) {
         await storage.write(key: 'token', value: decodeResp['token']);
         return null;
@@ -28,7 +30,7 @@ class AuthService extends ChangeNotifier {
       }
     } catch (e) {
       print(e);
-      return ('Error en el servidor, intentelo de nuevo');
+      return (e.toString());
     }
   }
 
