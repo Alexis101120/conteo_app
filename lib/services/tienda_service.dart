@@ -23,7 +23,7 @@ class TiendaService extends ChangeNotifier {
     this.isLoading = true;
     notifyListeners();
 
-    final url = Uri.parse('http://192.168.0.11:9090/api/Tiendas');
+    final url = Uri.parse('http://13.65.191.65:9095/api/Tiendas');
     final resp = await http.get(url, headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',

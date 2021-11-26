@@ -1,3 +1,4 @@
+import 'package:conteo_app/models/inventario.dart';
 import 'package:conteo_app/screens/screens.dart';
 import 'package:conteo_app/services/services.dart';
 import 'package:conteo_app/widgets/inventario_card.dart';
@@ -5,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class InventarioScreen extends StatelessWidget {
+class InventariosScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final inventarioService =
@@ -18,15 +19,14 @@ class InventarioScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inventarios'),
+        title: const Text('Inventarios'),
         actions: [
           IconButton(
               onPressed: () async {
                 await authService.logout();
-                Navigator.pushNamedAndRemoveUntil(
-                    context, 'login', (Route<dynamic> route) => true);
+                Navigator.pushReplacementNamed(context, 'login');
               },
-              icon: Icon(Icons.login_outlined))
+              icon: const Icon(Icons.login_outlined))
         ],
       ),
       body: RefreshIndicator(
@@ -38,6 +38,7 @@ class InventarioScreen extends StatelessWidget {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               prefs.setInt(
                   'Inventario', inventarioService.inventarios[index].id!);
+              Navigator.pushNamed(context, 'mov_index');
             },
             child: InventarioCard(
                 inventario: inventarioService.inventarios[index]),
@@ -46,7 +47,14 @@ class InventarioScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () {
+          inventarioService.selectedInventario = Inventario(
+            activo: false,
+            fecha: DateTime.now(),
+            nombre: "",
+          );
+          Navigator.pushNamed(context, 'inventario');
+        },
       ),
     );
   }

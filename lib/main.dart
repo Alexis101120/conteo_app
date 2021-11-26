@@ -30,7 +30,9 @@ class MyApp extends StatelessWidget {
       routes: {
         'login': (_) => LoginScreen(),
         'home': (_) => HomeScreen(),
-        'inventarios': (_) => InventarioScreen()
+        'inventarios': (_) => InventariosScreen(),
+        'inventario': (_) => InventarioScreen(),
+        'mov_index': (_) => MovimientosIndex()
       },
       scaffoldMessengerKey: NotificationsService.messengerKey,
       theme: ThemeData.light().copyWith(

@@ -13,7 +13,7 @@ class AuthService extends ChangeNotifier {
         'password': password,
       };
 
-      final url = Uri.parse('http://192.168.0.11:9090/api/Acceso/LogIn');
+      final url = Uri.parse('http://13.65.191.65:9095/api/Acceso/LogIn');
       final resp = await http.post(url, body: json.encode(authData), headers: {
         "Content-Type": "application/json",
         "Accept": "application/json"

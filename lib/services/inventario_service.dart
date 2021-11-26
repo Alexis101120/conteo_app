@@ -26,7 +26,7 @@ class InventarioService extends ChangeNotifier {
     this.isLoading = true;
     notifyListeners();
     final url = Uri.parse(
-        'http://192.168.0.11:9090/api/Inventarios/ObtenTodo/$tiendaId');
+        'http://13.65.191.65:9095/api/Inventarios/ObtenTodo/$tiendaId');
     final resp = await http.get(url, headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -34,10 +34,9 @@ class InventarioService extends ChangeNotifier {
     });
     print(resp.statusCode);
     if (resp.statusCode == 200) {
-      final tiendasMap = json.decode(resp.body);
-      final List<dynamic> listaTienda = tiendasMap['data'];
-      print(listaTienda);
-      listaTienda.forEach((element) {
+      final inventariosMap = json.decode(resp.body);
+      final List<dynamic> listaInventario = inventariosMap['data'];
+      listaInventario.forEach((element) {
         final tempInventario = Inventario.fromMap(element);
         final noExiste = inventarios
             .where((element) => element.id == tempInventario.id)
@@ -54,5 +53,40 @@ class InventarioService extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
     return [];
+  }
+
+  Future<Respuesta> crearInventario(Inventario inventario) async {
+    isSaving = true;
+    notifyListeners();
+    try {
+      final token = await storage.read(key: 'token');
+      final url = Uri.parse('http://13.65.191.65:9095/api/Inventarios');
+      final inventario_envio = await inventario.toJsonCrear();
+      final resp = await http.post(url, body: inventario_envio, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        if (decodedData['success'] == true) {
+          isSaving = false;
+          notifyListeners();
+          return Respuesta(true, decodedData['mensaje']);
+        } else {
+          isSaving = false;
+          notifyListeners();
+          return Respuesta(false, decodedData['mensaje']);
+        }
+      } else {
+        isSaving = false;
+        notifyListeners();
+        return Respuesta(false, 'Ocurrio un error en el servidor');
+      }
+    } catch (ex) {
+      isSaving = false;
+      notifyListeners();
+      return Respuesta(false, 'Ocurrio un error en el servidor');
+    }
   }
 }

@@ -30,7 +30,7 @@ class _HeaderIcon extends StatelessWidget {
         margin: EdgeInsets.only(top: 30),
         child: Column(
           children: [
-            Icon(Icons.qr_code_scanner_sharp, color: Colors.white, size: 100),
+            Icon(Icons.qr_code, color: Colors.white, size: 100),
             Text(
               'Sistema de conteo',
               style: TextStyle(color: Colors.white, fontSize: (22.0)),

@@ -8,7 +8,7 @@ class InventarioCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 13.0),
+      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 7.0),
       elevation: 1.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Column(
@@ -19,15 +19,17 @@ class InventarioCard extends StatelessWidget {
               children: [
                 Text(
                   inventario.nombre!,
-                  style: TextStyle(fontSize: 20.0),
+                  style: const TextStyle(
+                      fontSize: 16.0, overflow: TextOverflow.ellipsis),
                 ),
                 Text(
                   'Usuario : ${inventario.usuario}',
-                  style: TextStyle(fontSize: 20.0),
+                  style: const TextStyle(
+                      fontSize: 16.0, overflow: TextOverflow.ellipsis),
                 ),
                 Text(
                   '${inventario.fecha!.day}-${inventario.fecha!.month}-${inventario.fecha!.year}',
-                  style: TextStyle(fontSize: 20.0),
+                  style: const TextStyle(fontSize: 16.0),
                 ),
               ],
             ),

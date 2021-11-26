@@ -13,7 +13,7 @@ class TiendaCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(top: 30, bottom: 50),
         width: double.infinity,
-        height: 400,
+        height: 300,
         decoration: _cardBorders(),
         child: Stack(
           alignment: Alignment.bottomLeft,
@@ -72,7 +72,7 @@ class _TiendaDetail extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         width: double.infinity,
-        height: 70,
+        height: 50,
         decoration: _buildBoxDecoration(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
