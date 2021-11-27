@@ -1,3 +1,4 @@
+import 'package:conteo_app/providers/providers.dart';
 import 'package:conteo_app/screens/inventarios_screen.dart';
 import 'package:conteo_app/screens/screens.dart';
 import 'package:conteo_app/services/services.dart';
@@ -14,6 +15,8 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => TiendaService()),
         ChangeNotifierProvider(create: (_) => InventarioService()),
+        ChangeNotifierProvider(create: (_) => UiProvider()),
+        ChangeNotifierProvider(create: (_) => MovimientoService()),
       ],
       child: MyApp(),
     );

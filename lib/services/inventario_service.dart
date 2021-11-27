@@ -21,9 +21,9 @@ class InventarioService extends ChangeNotifier {
   Future<List<Inventario>> loadInventarios() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final tiendaId = await prefs.getInt('Tienda');
-    print('Tienda id $tiendaId');
     final token = await storage.read(key: 'token');
-    this.isLoading = true;
+    isLoading = true;
+    inventarios = [];
     notifyListeners();
     final url = Uri.parse(
         'http://13.65.191.65:9095/api/Inventarios/ObtenTodo/$tiendaId');
@@ -32,7 +32,6 @@ class InventarioService extends ChangeNotifier {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     });
-    print(resp.statusCode);
     if (resp.statusCode == 200) {
       final inventariosMap = json.decode(resp.body);
       final List<dynamic> listaInventario = inventariosMap['data'];

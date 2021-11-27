@@ -83,10 +83,13 @@ class _LoginForm extends StatelessWidget {
                 color: Colors.deepPurple,
                 child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                    child: Text(
-                      loginForm.isLoading ? 'Espere' : 'Ingresar',
-                      style: TextStyle(color: Colors.white),
-                    )),
+                    child: loginForm.isLoading
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2.0,
+                          )
+                        : const Text('Ingresar',
+                            style: TextStyle(color: Colors.white))),
                 onPressed: loginForm.isLoading
                     ? null
                     : () async {

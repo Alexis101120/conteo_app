@@ -11,13 +11,15 @@ class CustomNavigationBar extends StatelessWidget {
     final currentIndex = uiProvider.selectedMenuOpt;
 
     return BottomNavigationBar(
+      selectedItemColor: Colors.indigoAccent,
       onTap: (int i) => uiProvider.selectedMenuOpt = i,
       currentIndex: currentIndex,
       elevation: 0,
       items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Conteo'),
         BottomNavigationBarItem(
-            icon: Icon(Icons.compass_calibration), label: 'Total')
+            icon: Icon(Icons.chrome_reader_mode_outlined), label: 'Conteo'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.mobile_friendly), label: 'Total')
       ],
     );
   }

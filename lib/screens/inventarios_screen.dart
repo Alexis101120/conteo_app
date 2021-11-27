@@ -24,7 +24,7 @@ class InventariosScreen extends StatelessWidget {
           IconButton(
               onPressed: () async {
                 await authService.logout();
-                Navigator.pushReplacementNamed(context, 'login');
+                Navigator.of(context).pushReplacementNamed('login');
               },
               icon: const Icon(Icons.login_outlined))
         ],
@@ -34,6 +34,8 @@ class InventariosScreen extends StatelessWidget {
         child: ListView.builder(
           itemCount: inventarioService.inventarios.length,
           itemBuilder: (BuildContext context, int index) => GestureDetector(
+            onLongPress: () =>
+                NotificationsService.showSnackbar('Tap sostenido'),
             onTap: () async {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               prefs.setInt(
@@ -46,7 +48,7 @@ class InventariosScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () {
           inventarioService.selectedInventario = Inventario(
             activo: false,

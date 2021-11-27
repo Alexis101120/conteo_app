@@ -21,8 +21,7 @@ class HomeScreen extends StatelessWidget {
             IconButton(
                 onPressed: () async {
                   await authService.logout();
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, 'login', (Route<dynamic> route) => true);
+                  Navigator.of(context).pushReplacementNamed('login');
                 },
                 icon: Icon(Icons.login_outlined))
           ],

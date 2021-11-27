@@ -86,6 +86,7 @@ class _InventarioScreen extends StatelessWidget {
                   if (!inventarioForm.isValidForm()) return;
                   final resp = await inventarioService
                       .crearInventario(inventarioForm.inventario);
+                  await inventarioService.loadInventarios();
                   NotificationsService.showSnackbar(resp.mensaje);
                 },
         ),

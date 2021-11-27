@@ -8,13 +8,16 @@ class InventarioCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: inventario.activo! ? Colors.green.shade50 : Colors.red.shade50,
       margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 7.0),
       elevation: 1.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Column(
         children: [
           ListTile(
-            leading: Icon(Icons.calendar_today),
+            leading: inventario.activo!
+                ? Icon(Icons.lock_open)
+                : Icon(Icons.lock_outline),
             title: Column(
               children: [
                 Text(
