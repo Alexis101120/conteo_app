@@ -15,13 +15,13 @@ class Movimiento {
     this.inventarioId,
   });
 
-  final int? id;
-  final String? codigo;
-  final String? descripcion;
-  final int? cantidad;
-  final DateTime? fechRegistro;
-  final String? usuario;
-  final int? inventarioId;
+   int? id;
+   String? codigo;
+   String? descripcion;
+   int? cantidad;
+   DateTime? fechRegistro;
+   String? usuario;
+   int? inventarioId;
 
   factory Movimiento.fromJson(String str) =>
       Movimiento.fromMap(json.decode(str));
@@ -39,12 +39,9 @@ class Movimiento {
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id,
         "codigo": codigo,
         "descripcion": descripcion,
         "cantidad": cantidad,
-        "fech_Registro": fechRegistro!.toIso8601String(),
-        "usuario": usuario,
         "inventario_Id": inventarioId,
       };
 }

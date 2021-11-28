@@ -106,7 +106,7 @@ class _LoginForm extends StatelessWidget {
                         if (resp == null) {
                           Navigator.pushReplacementNamed(context, 'home');
                         } else {
-                          NotificationsService.showSnackbar(resp);
+                          NotificationsService.showSnackbar(resp,colorBg: Colors.red.shade500);
                           // showTopSnackBar(
                           //   context,
                           //   CustomSnackBar.error(

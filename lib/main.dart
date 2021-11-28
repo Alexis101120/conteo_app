@@ -15,6 +15,7 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => TiendaService()),
         ChangeNotifierProvider(create: (_) => InventarioService()),
+        ChangeNotifierProvider(create: (_) => ProductoService()),
         ChangeNotifierProvider(create: (_) => UiProvider()),
         ChangeNotifierProvider(create: (_) => MovimientoService()),
       ],
@@ -35,7 +36,8 @@ class MyApp extends StatelessWidget {
         'home': (_) => HomeScreen(),
         'inventarios': (_) => InventariosScreen(),
         'inventario': (_) => InventarioScreen(),
-        'mov_index': (_) => MovimientosIndex()
+        'mov_index': (_) => MovimientosIndex(),
+        'conteo' : (_) => ConteoScreen()
       },
       scaffoldMessengerKey: NotificationsService.messengerKey,
       theme: ThemeData.light().copyWith(

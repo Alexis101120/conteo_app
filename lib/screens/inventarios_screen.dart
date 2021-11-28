@@ -34,13 +34,20 @@ class InventariosScreen extends StatelessWidget {
         child: ListView.builder(
           itemCount: inventarioService.inventarios.length,
           itemBuilder: (BuildContext context, int index) => GestureDetector(
-            onLongPress: () =>
-                NotificationsService.showSnackbar('Tap sostenido'),
+            onLongPress: () {
+                inventarioService.selectedInventario = inventarioService.inventarios[index];
+                Navigator.pushNamed(context, 'inventario');
+            },
             onTap: () async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              prefs.setInt(
+              if(inventarioService.inventarios[index].activo!){
+                   SharedPreferences prefs = await SharedPreferences.getInstance();
+                   prefs.setInt(
                   'Inventario', inventarioService.inventarios[index].id!);
-              Navigator.pushNamed(context, 'mov_index');
+                  Navigator.pushNamed(context, 'mov_index');
+              }else{
+                  NotificationsService.showSnackbar('Inventario cerrado');
+              }
+           
             },
             child: InventarioCard(
                 inventario: inventarioService.inventarios[index]),

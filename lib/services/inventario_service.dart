@@ -54,9 +54,24 @@ class InventarioService extends ChangeNotifier {
     return [];
   }
 
-  Future<Respuesta> crearInventario(Inventario inventario) async {
+  Future<Respuesta> crearOactualizarInventario(Inventario inventario) async{
     isSaving = true;
     notifyListeners();
+
+    if(inventario.id == null){
+      final resp = await crearInventario(inventario);
+      isSaving=false;
+      notifyListeners();
+      return resp;
+    }else{
+      final resp = await actualizarInventario(inventario);
+      isSaving=false;
+      notifyListeners();
+      return resp;
+    }
+  }
+
+  Future<Respuesta> crearInventario(Inventario inventario) async {
     try {
       final token = await storage.read(key: 'token');
       final url = Uri.parse('http://13.65.191.65:9095/api/Inventarios');
@@ -69,23 +84,45 @@ class InventarioService extends ChangeNotifier {
       if (resp.statusCode == 200) {
         final decodedData = json.decode(resp.body);
         if (decodedData['success'] == true) {
-          isSaving = false;
-          notifyListeners();
+
           return Respuesta(true, decodedData['mensaje']);
         } else {
-          isSaving = false;
-          notifyListeners();
           return Respuesta(false, decodedData['mensaje']);
         }
       } else {
-        isSaving = false;
-        notifyListeners();
         return Respuesta(false, 'Ocurrio un error en el servidor');
       }
     } catch (ex) {
-      isSaving = false;
-      notifyListeners();
       return Respuesta(false, 'Ocurrio un error en el servidor');
     }
   }
+
+  Future<Respuesta> actualizarInventario(Inventario inventario) async {
+    try {
+      final token = await storage.read(key: 'token');
+      final url = Uri.parse('http://13.65.191.65:9095/api/Inventarios/InventarioId:int?InventarioId=${inventario.id}');
+      final inventario_envio = await inventario.toJsonCrear();
+      print(url);
+      print(inventario_envio);
+      final resp = await http.put(url, body: inventario_envio, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        if (decodedData['success'] == true) {
+
+          return Respuesta(true, decodedData['mensaje']);
+        } else {
+          return Respuesta(false, decodedData['mensaje']);
+        }
+      } else {
+        return Respuesta(false, 'Ocurrio un error en el servidor');
+      }
+    } catch (ex) {
+      return Respuesta(false, 'Ocurrio un error en el servidor');
+    }
+  }
+
 }

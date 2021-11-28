@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:conteo_app/models/movimiento.dart';
+import 'package:conteo_app/models/respuesta.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,7 +33,6 @@ class MovimientoService extends ChangeNotifier {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     });
-    print(resp.body);
     if (resp.statusCode == 200) {
       final movimientoMap = json.decode(resp.body);
       final List<dynamic> listaMovimiento = movimientoMap['data'];
@@ -42,11 +42,87 @@ class MovimientoService extends ChangeNotifier {
       });
       isLoading = false;
       notifyListeners();
-      print(movimientos);
       return movimientos;
     }
     isLoading = false;
     notifyListeners();
     return movimientos;
+
   }
+
+ Future<Respuesta> crearOactualizarInventario(Movimiento movimiento) async{
+    isSaving = true;
+    notifyListeners();
+
+    if(movimiento.id == null){
+      final resp = await crearMovimiento(movimiento);
+      isSaving=false;
+      notifyListeners();
+      return resp;
+    }else{
+      final resp = await actualizarMovimiento(movimiento);
+      isSaving=false;
+      notifyListeners();
+      return resp;
+    }
+  }
+
+    Future<Respuesta> crearMovimiento(Movimiento movimiento) async {
+    try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+      final token = await storage.read(key: 'token');
+      final url = Uri.parse('http://13.65.191.65:9095/api/Movimientos');
+      movimiento.inventarioId = await prefs.getInt('Inventario');
+      final movimiento_envio = await movimiento.toJson();
+      final resp = await http.post(url, body: movimiento_envio, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        if (decodedData['success'] == true) {
+
+          return Respuesta(true, decodedData['mensaje']);
+        } else {
+          return Respuesta(false, decodedData['mensaje']);
+        }
+      } else {
+        return Respuesta(false, 'Ocurrio un error en el servidor');
+      }
+    } catch (ex) {
+      return Respuesta(false, 'Ocurrio un error en el servidor');
+    }
+  }
+
+
+  Future<Respuesta> actualizarMovimiento(Movimiento movimiento) async {
+    try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+      final token = await storage.read(key: 'token');
+      final url = Uri.parse('http://13.65.191.65:9095/api/Movimientos');
+      movimiento.inventarioId = await prefs.getInt('Inventario');
+      final movimiento_envio = await movimiento.toJson();
+      final resp = await http.post(url, body: movimiento_envio, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        if (decodedData['success'] == true) {
+
+          return Respuesta(true, decodedData['mensaje']);
+        } else {
+          return Respuesta(false, decodedData['mensaje']);
+        }
+      } else {
+        return Respuesta(false, 'Ocurrio un error en el servidor');
+      }
+    } catch (ex) {
+      return Respuesta(false, 'Ocurrio un error en el servidor');
+    }
+  }
+
+
 }

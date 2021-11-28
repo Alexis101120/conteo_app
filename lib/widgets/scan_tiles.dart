@@ -78,7 +78,8 @@ class ScanTiles extends StatelessWidget {
                     style: _style(),
                     textAlign: TextAlign.start,
                   ),
-                  Text(movimientoService.movimientos[i].usuario ?? '')
+                  Text(movimientoService.movimientos[i].usuario ?? ''),
+                  const Divider()
                 ],
               ),
             )),
@@ -87,7 +88,7 @@ class ScanTiles extends StatelessWidget {
   }
 
   TextStyle _style() => const TextStyle(
-        fontSize: 18,
+        fontSize: 17,
         color: Colors.black,
       );
 }

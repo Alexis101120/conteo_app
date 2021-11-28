@@ -1,4 +1,4 @@
-import 'package:conteo_app/models/inventario.dart';
+import 'package:conteo_app/models/models.dart';
 import 'package:conteo_app/providers/providers.dart';
 import 'package:conteo_app/services/services.dart';
 import 'package:conteo_app/ui/inputs_decorations.dart';
@@ -85,9 +85,14 @@ class _InventarioScreen extends StatelessWidget {
 
                   if (!inventarioForm.isValidForm()) return;
                   final resp = await inventarioService
-                      .crearInventario(inventarioForm.inventario);
+                      .crearOactualizarInventario(inventarioForm.inventario);
                   await inventarioService.loadInventarios();
-                  NotificationsService.showSnackbar(resp.mensaje);
+                  if(resp.success){
+                    NotificationsService.showSnackbar(resp.mensaje, colorBg: Colors.green.shade500);
+                  }else{
+                    NotificationsService.showSnackbar(resp.mensaje, colorBg: Colors.red.shade400);
+                  }
+                  
                 },
         ),
       ),
