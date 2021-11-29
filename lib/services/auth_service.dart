@@ -18,6 +18,7 @@ class AuthService extends ChangeNotifier {
         "Content-Type": "application/json",
         "Accept": "application/json"
       });
+      print(resp.body);
       if (resp.statusCode != 200) {
         return 'Usuario y/o contraseña incorrectos';
       }

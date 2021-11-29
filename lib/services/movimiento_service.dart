@@ -47,34 +47,34 @@ class MovimientoService extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
     return movimientos;
-
   }
 
- Future<Respuesta> crearOactualizarInventario(Movimiento movimiento) async{
+  Future<Respuesta> crearOactualizarInventario(Movimiento movimiento) async {
     isSaving = true;
     notifyListeners();
 
-    if(movimiento.id == null){
+    if (movimiento.id == null) {
       final resp = await crearMovimiento(movimiento);
-      isSaving=false;
+      isSaving = false;
       notifyListeners();
       return resp;
-    }else{
+    } else {
       final resp = await actualizarMovimiento(movimiento);
-      isSaving=false;
+      isSaving = false;
       notifyListeners();
       return resp;
     }
   }
 
-    Future<Respuesta> crearMovimiento(Movimiento movimiento) async {
+  Future<Respuesta> crearMovimiento(Movimiento movimiento) async {
     try {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
+      print(movimiento);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       final token = await storage.read(key: 'token');
       final url = Uri.parse('http://13.65.191.65:9095/api/Movimientos');
-      movimiento.inventarioId = await prefs.getInt('Inventario');
-      final movimiento_envio = await movimiento.toJson();
-      final resp = await http.post(url, body: movimiento_envio, headers: {
+      movimiento.inventarioId = prefs.getInt('Inventario');
+      final movimientoEnvio = movimiento.toJson();
+      final resp = await http.post(url, body: movimientoEnvio, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
@@ -82,7 +82,6 @@ class MovimientoService extends ChangeNotifier {
       if (resp.statusCode == 200) {
         final decodedData = json.decode(resp.body);
         if (decodedData['success'] == true) {
-
           return Respuesta(true, decodedData['mensaje']);
         } else {
           return Respuesta(false, decodedData['mensaje']);
@@ -94,11 +93,10 @@ class MovimientoService extends ChangeNotifier {
       return Respuesta(false, 'Ocurrio un error en el servidor');
     }
   }
-
 
   Future<Respuesta> actualizarMovimiento(Movimiento movimiento) async {
     try {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       final token = await storage.read(key: 'token');
       final url = Uri.parse('http://13.65.191.65:9095/api/Movimientos');
       movimiento.inventarioId = await prefs.getInt('Inventario');
@@ -111,7 +109,6 @@ class MovimientoService extends ChangeNotifier {
       if (resp.statusCode == 200) {
         final decodedData = json.decode(resp.body);
         if (decodedData['success'] == true) {
-
           return Respuesta(true, decodedData['mensaje']);
         } else {
           return Respuesta(false, decodedData['mensaje']);
@@ -120,9 +117,33 @@ class MovimientoService extends ChangeNotifier {
         return Respuesta(false, 'Ocurrio un error en el servidor');
       }
     } catch (ex) {
-      return Respuesta(false, 'Ocurrio un error en el servidor');
+      return Respuesta(false, '$ex');
     }
   }
 
-
+  Future<Respuesta> eliminarMovimiento(int movimiento) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final token = await storage.read(key: 'token');
+      final url =
+          Uri.parse('http://13.65.191.65:9095/api/Movimientos/$movimiento');
+      final resp = await http.delete(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        if (decodedData['success'] == true) {
+          return Respuesta(true, decodedData['mensaje']);
+        } else {
+          return Respuesta(false, decodedData['mensaje']);
+        }
+      } else {
+        return Respuesta(false, 'Ocurrio un error en el servidor');
+      }
+    } catch (e) {
+      return Respuesta(false, '$e');
+    }
+  }
 }

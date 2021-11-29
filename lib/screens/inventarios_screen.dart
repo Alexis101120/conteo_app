@@ -1,4 +1,5 @@
 import 'package:conteo_app/models/inventario.dart';
+import 'package:conteo_app/providers/providers.dart';
 import 'package:conteo_app/screens/screens.dart';
 import 'package:conteo_app/services/services.dart';
 import 'package:conteo_app/widgets/inventario_card.dart';
@@ -11,6 +12,8 @@ class InventariosScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final inventarioService =
         Provider.of<InventarioService>(context, listen: true);
+    final movimientoService = Provider.of<MovimientoService>(context);
+    final productoService = Provider.of<ProductoService>(context, listen: true);
     final authService = Provider.of<AuthService>(context, listen: false);
 
     if (inventarioService.isLoading) {
@@ -24,7 +27,9 @@ class InventariosScreen extends StatelessWidget {
           IconButton(
               onPressed: () async {
                 await authService.logout();
-                Navigator.of(context).pushReplacementNamed('login');
+                // Navigator.of(context).pushReplacementNamed('login');
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    'login', (Route<dynamic> route) => false);
               },
               icon: const Icon(Icons.login_outlined))
         ],
@@ -35,19 +40,35 @@ class InventariosScreen extends StatelessWidget {
           itemCount: inventarioService.inventarios.length,
           itemBuilder: (BuildContext context, int index) => GestureDetector(
             onLongPress: () {
-                inventarioService.selectedInventario = inventarioService.inventarios[index];
-                Navigator.pushNamed(context, 'inventario');
+              inventarioService.selectedInventario =
+                  inventarioService.inventarios[index];
+              Navigator.pushNamed(context, 'inventario');
+            },
+            onDoubleTap: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              final correo = prefs.getString('Correo');
+              Navigator.pushNamed(context, 'correo', arguments: {
+                'correo': correo,
+                'inventarioId': inventarioService.inventarios[index].id
+              });
             },
             onTap: () async {
-              if(inventarioService.inventarios[index].activo!){
-                   SharedPreferences prefs = await SharedPreferences.getInstance();
-                   prefs.setInt(
-                  'Inventario', inventarioService.inventarios[index].id!);
-                  Navigator.pushNamed(context, 'mov_index');
-              }else{
-                  NotificationsService.showSnackbar('Inventario cerrado');
+              if (inventarioService.inventarios[index].activo!) {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                final uiProvider =
+                    Provider.of<UiProvider>(context, listen: false);
+                uiProvider.selectedMenuOpt = 0;
+                prefs.setInt(
+                    'Inventario', inventarioService.inventarios[index].id!);
+                movimientoService.loadMovimientos();
+                productoService.loadProductos();
+                Navigator.pushNamed(context, 'mov_index');
+              } else {
+                NotificationsService.showSnackbar(
+                  'Inventario cerrado',
+                  colorBg: Colors.yellow.shade200,
+                );
               }
-           
             },
             child: InventarioCard(
                 inventario: inventarioService.inventarios[index]),

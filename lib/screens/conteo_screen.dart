@@ -12,59 +12,65 @@ class ConteoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final movimientoService = Provider.of<MovimientoService>(context);
-    
-   return ChangeNotifierProvider(
-      create: (_) =>
-          ConteoFormProvider(movimientoService.selectedMovimiento),
-      child: _InventarioScreen(movimientoService: movimientoService),
+    final productoService = Provider.of<ProductoService>(context);
+
+    return ChangeNotifierProvider(
+      create: (_) => ConteoFormProvider(movimientoService.selectedMovimiento),
+      child: _InventarioScreen(
+        movimientoService: movimientoService,
+        productoService: productoService,
+      ),
     );
   }
 }
 
-
 class _InventarioScreen extends StatelessWidget {
   final MovimientoService movimientoService;
-  const _InventarioScreen({Key? key, required this.movimientoService}) : super(key: key);
+  final ProductoService productoService;
+  const _InventarioScreen(
+      {Key? key,
+      required this.movimientoService,
+      required this.productoService})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final conteoForm = Provider.of<ConteoFormProvider>(context);
     final movimiento = conteoForm.movimiento;
     return Scaffold(
-     appBar: AppBar(
+      appBar: AppBar(
         title: Text('Registro de inventario'),
       ),
       body: SingleChildScrollView(
         child: Padding(
-           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-           child: Container(
-             decoration:  _buildBoxDecoration(),
-             padding: const EdgeInsets.symmetric(horizontal: 20),
-             width: double.infinity,
-             child : Form(
-               key: conteoForm.formKey,
-               autovalidateMode: AutovalidateMode.onUserInteraction,
-               child: Column(
-                 children: [
-                   const SizedBox(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: Container(
+              decoration: _buildBoxDecoration(),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              width: double.infinity,
+              child: Form(
+                key: conteoForm.formKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: Column(
+                  children: [
+                    const SizedBox(
                       height: 10.0,
                     ),
                     TextFormField(
                       initialValue: movimiento.codigo,
-                      onChanged: (value) => movimiento.codigo= value,
-                       validator: (value) {
+                      onChanged: (value) => movimiento.codigo = value,
+                      validator: (value) {
                         if (value == null || value.isEmpty)
                           return 'El codigo es obligatorio';
                       },
                       decoration: InputDecorations.authInputDecoration(
-                          hintText: 'Codigo',
-                          labelText: 'Codigo:'),
+                          hintText: 'Codigo', labelText: 'Codigo:'),
                     ),
                     const SizedBox(height: 30),
-                     TextFormField(
+                    TextFormField(
                       initialValue: movimiento.descripcion,
-                      onChanged: (value) => movimiento.descripcion= value,
-                       validator: (value) {
+                      onChanged: (value) => movimiento.descripcion = value,
+                      validator: (value) {
                         if (value == null || value.isEmpty)
                           return 'La descripcion es obligatoria';
                       },
@@ -74,28 +80,26 @@ class _InventarioScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 30),
                     TextFormField(
-                initialValue: '${movimiento.cantidad}',
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))
-                ],
-                onChanged: ( value ) {
-                  if ( int.tryParse(value) == null ) {
-                    movimiento.cantidad = 0;
-                  } else {
-                    movimiento.cantidad = int.parse(value);
-                  }
-                },
-                keyboardType: TextInputType.number,
-                decoration: InputDecorations.authInputDecoration(
-                  hintText: '0', 
-                  labelText: 'Cantidad:'
-                ),
-              ),
+                      initialValue: '${movimiento.cantidad}',
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^(\d+)?\.?\d{0,2}'))
+                      ],
+                      onChanged: (value) {
+                        if (int.tryParse(value) == null) {
+                          movimiento.cantidad = 0;
+                        } else {
+                          movimiento.cantidad = int.parse(value);
+                        }
+                      },
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecorations.authInputDecoration(
+                          hintText: '0', labelText: 'Cantidad:'),
+                    ),
                     const SizedBox(height: 30),
-                 ],
-               ),
-             )
-           ),
+                  ],
+                ),
+              )),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
@@ -114,18 +118,22 @@ class _InventarioScreen extends StatelessWidget {
                   if (!conteoForm.isValidForm()) return;
                   final resp = await movimientoService
                       .crearOactualizarInventario(conteoForm.movimiento);
-                  if(resp.success){
-                     await movimientoService.loadMovimientos();
-                    NotificationsService.showSnackbar(resp.mensaje, colorBg: Colors.green.shade500);
-                  }else{
-                    NotificationsService.showSnackbar(resp.mensaje, colorBg: Colors.red.shade400);
+                  if (resp.success) {
+                    await movimientoService.loadMovimientos();
+                    await productoService.loadProductos();
+                    await NotificationsService.showSnackbar(resp.mensaje,
+                        colorBg: Colors.green.shade500);
+                    Navigator.pop(context);
+                  } else {
+                    NotificationsService.showSnackbar(resp.mensaje,
+                        colorBg: Colors.red.shade400);
                   }
-                  
                 },
         ),
       ),
     );
   }
+
   BoxDecoration _buildBoxDecoration() => BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(10)),

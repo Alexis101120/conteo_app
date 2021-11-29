@@ -37,7 +37,8 @@ class MyApp extends StatelessWidget {
         'inventarios': (_) => InventariosScreen(),
         'inventario': (_) => InventarioScreen(),
         'mov_index': (_) => MovimientosIndex(),
-        'conteo' : (_) => ConteoScreen()
+        'conteo': (_) => ConteoScreen(),
+        'correo': (_) => CorreoScreen()
       },
       scaffoldMessengerKey: NotificationsService.messengerKey,
       theme: ThemeData.light().copyWith(

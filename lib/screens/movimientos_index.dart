@@ -19,7 +19,8 @@ class MovimientosIndex extends StatelessWidget {
             IconButton(
                 onPressed: () async {
                   await authService.logout();
-                  Navigator.of(context).pushReplacementNamed('login');
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      'login', (Route<dynamic> route) => false);
                 },
                 icon: Icon(Icons.login_outlined))
           ],

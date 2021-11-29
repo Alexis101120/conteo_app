@@ -13,3 +13,4 @@ export 'package:conteo_app/screens/movimientos_screen.dart';
 export 'package:conteo_app/screens/productos_screen.dart';
 export 'package:conteo_app/screens/conteo_screen.dart';
 
+export 'package:conteo_app/screens/correo_screen.dart';

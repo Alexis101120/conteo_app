@@ -10,6 +10,8 @@ class ScanTiles extends StatelessWidget {
     final movimientoService =
         Provider.of<MovimientoService>(context, listen: true);
     final authService = Provider.of<AuthService>(context, listen: false);
+    final productoService =
+        Provider.of<ProductoService>(context, listen: false);
     return RefreshIndicator(
       onRefresh: movimientoService.loadMovimientos,
       child: ListView.builder(
@@ -26,7 +28,20 @@ class ScanTiles extends StatelessWidget {
                         "Deseas eliminar el movimiento? será afectado el conteo"),
                     actions: <Widget>[
                       TextButton(
-                          onPressed: () => Navigator.of(context).pop(true),
+                          onPressed: () async {
+                            final resp =
+                                await movimientoService.eliminarMovimiento(
+                                    movimientoService.movimientos[i].id!);
+                            Navigator.of(context).pop(true);
+                            if (resp.success) {
+                              NotificationsService.showSnackbar(resp.mensaje,
+                                  colorBg: Colors.green.shade500);
+                              productoService.loadProductos();
+                            } else {
+                              NotificationsService.showSnackbar(resp.mensaje,
+                                  colorBg: Colors.red.shade500);
+                            }
+                          },
                           child: const Text("Si eliminar")),
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(false),

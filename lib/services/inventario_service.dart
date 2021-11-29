@@ -54,18 +54,18 @@ class InventarioService extends ChangeNotifier {
     return [];
   }
 
-  Future<Respuesta> crearOactualizarInventario(Inventario inventario) async{
+  Future<Respuesta> crearOactualizarInventario(Inventario inventario) async {
     isSaving = true;
     notifyListeners();
 
-    if(inventario.id == null){
+    if (inventario.id == null) {
       final resp = await crearInventario(inventario);
-      isSaving=false;
+      isSaving = false;
       notifyListeners();
       return resp;
-    }else{
+    } else {
       final resp = await actualizarInventario(inventario);
-      isSaving=false;
+      isSaving = false;
       notifyListeners();
       return resp;
     }
@@ -84,7 +84,6 @@ class InventarioService extends ChangeNotifier {
       if (resp.statusCode == 200) {
         final decodedData = json.decode(resp.body);
         if (decodedData['success'] == true) {
-
           return Respuesta(true, decodedData['mensaje']);
         } else {
           return Respuesta(false, decodedData['mensaje']);
@@ -100,7 +99,8 @@ class InventarioService extends ChangeNotifier {
   Future<Respuesta> actualizarInventario(Inventario inventario) async {
     try {
       final token = await storage.read(key: 'token');
-      final url = Uri.parse('http://13.65.191.65:9095/api/Inventarios/InventarioId:int?InventarioId=${inventario.id}');
+      final url = Uri.parse(
+          'http://13.65.191.65:9095/api/Inventarios/InventarioId:int?InventarioId=${inventario.id}');
       final inventario_envio = await inventario.toJsonCrear();
       print(url);
       print(inventario_envio);
@@ -112,7 +112,6 @@ class InventarioService extends ChangeNotifier {
       if (resp.statusCode == 200) {
         final decodedData = json.decode(resp.body);
         if (decodedData['success'] == true) {
-
           return Respuesta(true, decodedData['mensaje']);
         } else {
           return Respuesta(false, decodedData['mensaje']);
@@ -125,4 +124,33 @@ class InventarioService extends ChangeNotifier {
     }
   }
 
+  Future<Respuesta> enviarInventario(int inventarioId, String correo) async {
+    try {
+      isLoading = true;
+      final token = await storage.read(key: 'token');
+      final url = Uri.parse(
+          'http://13.65.191.65:9095/api/Inventarios/GenerarExcel/$inventarioId,$correo');
+      final resp = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        if (decodedData['success'] == true) {
+          isLoading = false;
+          return Respuesta(true, decodedData['mensaje']);
+        } else {
+          isLoading = false;
+          return Respuesta(false, decodedData['mensaje']);
+        }
+      } else {
+        isLoading = false;
+        return Respuesta(false, 'Ocurrio un error en el servidor');
+      }
+    } catch (ex) {
+      isLoading = false;
+      return Respuesta(false, '$ex');
+    }
+  }
 }

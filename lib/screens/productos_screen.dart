@@ -8,10 +8,9 @@ import 'package:provider/provider.dart';
 class ProductosScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final productoService =
-        Provider.of<ProductoService>(context, listen: true);
-    if(productoService.isLoading){
-       return Center(child: const CircularProgressIndicator());
+    final productoService = Provider.of<ProductoService>(context, listen: true);
+    if (productoService.isLoading) {
+      return Center(child: const CircularProgressIndicator());
     }
     return const ProductoTiles();
   }
