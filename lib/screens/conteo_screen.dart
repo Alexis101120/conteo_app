@@ -68,6 +68,7 @@ class _InventarioScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 30),
                     TextFormField(
+                      autofocus: (movimiento.descripcion=="" ? true : false),
                       initialValue: movimiento.descripcion,
                       onChanged: (value) => movimiento.descripcion = value,
                       validator: (value) {
@@ -80,10 +81,11 @@ class _InventarioScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 30),
                     TextFormField(
+                      autofocus: (movimiento.descripcion=="" ? false : true),
                       initialValue: '${movimiento.cantidad}',
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
-                            RegExp(r'^(\d+)?\.?\d{0,2}'))
+                            RegExp(r'^-?(\d+)?\.?\d{0,2}'))
                       ],
                       onChanged: (value) {
                         if (int.tryParse(value) == null) {
@@ -92,7 +94,12 @@ class _InventarioScreen extends StatelessWidget {
                           movimiento.cantidad = int.parse(value);
                         }
                       },
-                      keyboardType: TextInputType.number,
+                      validator: ( value ) {
+                         if (int.tryParse(value!) == null) {
+                           return 'EL numero es obligatorio';
+                        }
+                      },
+                      keyboardType: const TextInputType.numberWithOptions(signed: true),
                       decoration: InputDecorations.authInputDecoration(
                           hintText: '0', labelText: 'Cantidad:'),
                     ),
@@ -104,12 +111,12 @@ class _InventarioScreen extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10.0),
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: FloatingActionButton(
           elevation: 5.0,
           child: movimientoService.isSaving
-              ? CircularProgressIndicator(color: Colors.white)
-              : Icon(Icons.save_outlined),
+              ? const CircularProgressIndicator(color: Colors.white)
+              : const Icon(Icons.save_outlined),
           onPressed: movimientoService.isSaving
               ? null
               : () async {

@@ -127,6 +127,7 @@ class InventarioService extends ChangeNotifier {
   Future<Respuesta> enviarInventario(int inventarioId, String correo) async {
     try {
       isLoading = true;
+      notifyListeners();
       final token = await storage.read(key: 'token');
       final url = Uri.parse(
           'http://13.65.191.65:9095/api/Inventarios/GenerarExcel/$inventarioId,$correo');
@@ -139,17 +140,21 @@ class InventarioService extends ChangeNotifier {
         final decodedData = json.decode(resp.body);
         if (decodedData['success'] == true) {
           isLoading = false;
+          notifyListeners();
           return Respuesta(true, decodedData['mensaje']);
         } else {
           isLoading = false;
+          notifyListeners();
           return Respuesta(false, decodedData['mensaje']);
         }
       } else {
         isLoading = false;
+        notifyListeners();
         return Respuesta(false, 'Ocurrio un error en el servidor');
       }
     } catch (ex) {
       isLoading = false;
+      notifyListeners();
       return Respuesta(false, '$ex');
     }
   }

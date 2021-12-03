@@ -66,7 +66,7 @@ class InventariosScreen extends StatelessWidget {
               } else {
                 NotificationsService.showSnackbar(
                   'Inventario cerrado',
-                  colorBg: Colors.yellow.shade200,
+                  colorBg: Colors.yellow.shade700,
                 );
               }
             },
