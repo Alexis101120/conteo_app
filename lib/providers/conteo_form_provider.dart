@@ -1,4 +1,3 @@
-
 import 'package:conteo_app/models/models.dart';
 
 import 'package:flutter/material.dart';
@@ -12,5 +11,9 @@ class ConteoFormProvider extends ChangeNotifier {
 
   bool isValidForm() {
     return formKey.currentState?.validate() ?? false;
+  }
+
+  notify() {
+    notifyListeners();
   }
 }

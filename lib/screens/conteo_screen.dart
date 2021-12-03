@@ -35,7 +35,7 @@ class _InventarioScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final conteoForm = Provider.of<ConteoFormProvider>(context);
+    final conteoForm = Provider.of<ConteoFormProvider>(context, listen: true);
     final movimiento = conteoForm.movimiento;
     return Scaffold(
       appBar: AppBar(
@@ -57,18 +57,34 @@ class _InventarioScreen extends StatelessWidget {
                       height: 10.0,
                     ),
                     TextFormField(
-                      initialValue: movimiento.codigo,
-                      onChanged: (value) => movimiento.codigo = value,
-                      validator: (value) {
-                        if (value == null || value.isEmpty)
-                          return 'El codigo es obligatorio';
-                      },
-                      decoration: InputDecorations.authInputDecoration(
-                          hintText: 'Codigo', labelText: 'Codigo:'),
-                    ),
+                        initialValue: movimiento.codigo,
+                        onChanged: (value) => movimiento.codigo = value,
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return 'El codigo es obligatorio';
+                        },
+                        decoration: InputDecoration(
+                            enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.deepPurple),
+                            ),
+                            focusedBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.deepPurple, width: 2),
+                            ),
+                            hintText: 'Ingrese codigo',
+                            labelText: 'Codigo',
+                            labelStyle: const TextStyle(color: Colors.grey),
+                            suffixIcon: productoService.isLoading
+                                ? const CircularProgressIndicator()
+                                : IconButton(
+                                    icon: const Icon(Icons.search_outlined),
+                                    onPressed: () async {},
+                                  ),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)))),
                     const SizedBox(height: 30),
                     TextFormField(
-                      autofocus: (movimiento.descripcion=="" ? true : false),
+                      autofocus: (movimiento.descripcion == "" ? true : false),
                       initialValue: movimiento.descripcion,
                       onChanged: (value) => movimiento.descripcion = value,
                       validator: (value) {
@@ -81,7 +97,7 @@ class _InventarioScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 30),
                     TextFormField(
-                      autofocus: (movimiento.descripcion=="" ? false : true),
+                      autofocus: (movimiento.descripcion == "" ? false : true),
                       initialValue: '${movimiento.cantidad}',
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
@@ -94,12 +110,13 @@ class _InventarioScreen extends StatelessWidget {
                           movimiento.cantidad = int.parse(value);
                         }
                       },
-                      validator: ( value ) {
-                         if (int.tryParse(value!) == null) {
-                           return 'EL numero es obligatorio';
+                      validator: (value) {
+                        if (int.tryParse(value!) == null) {
+                          return 'EL numero es obligatorio';
                         }
                       },
-                      keyboardType: const TextInputType.numberWithOptions(signed: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(signed: true),
                       decoration: InputDecorations.authInputDecoration(
                           hintText: '0', labelText: 'Cantidad:'),
                     ),

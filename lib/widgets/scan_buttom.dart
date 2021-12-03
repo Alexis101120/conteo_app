@@ -11,8 +11,9 @@ class ScanButon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final movimientoService =
-        Provider.of<MovimientoService>(context, listen: true);
-    final productoService = Provider.of<ProductoService>(context, listen: true);
+        Provider.of<MovimientoService>(context, listen: false);
+    final productoService =
+        Provider.of<ProductoService>(context, listen: false);
     return FloatingActionButton(
       elevation: 0,
       onPressed: () async {
@@ -25,7 +26,6 @@ class ScanButon extends StatelessWidget {
             return value;
           });
 
-          //TODO: implementar funcion para validar si existe el producto
           String descripcion = barcodeScanRes == -1
               ? ''
               : await productoService.loadProducto(barcodeScanRes);
