@@ -20,8 +20,7 @@ class InventarioCard extends StatelessWidget {
                 : Icon(Icons.lock_outline),
             title: Column(
               children: [
-                Text(
-                  inventario.nombre!,
+                Text('${inventario.nombre!} id : ${inventario.id!}',
                   style: const TextStyle(
                       fontSize: 16.0, overflow: TextOverflow.ellipsis),
                 ),

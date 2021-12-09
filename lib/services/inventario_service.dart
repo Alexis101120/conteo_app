@@ -13,6 +13,7 @@ class InventarioService extends ChangeNotifier {
 
   bool isLoading = true;
   bool isSaving = false;
+  bool isSearch = false;
 
   InventarioService() {
     loadInventarios();
@@ -158,4 +159,40 @@ class InventarioService extends ChangeNotifier {
       return Respuesta(false, '$ex');
     }
   }
+
+  filtrarInventarios(String valor) async {
+    isSearch = true;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final tiendaId = await prefs.getInt('Tienda');
+    final token = await storage.read(key: 'token');
+   
+    notifyListeners();
+     final url = Uri.parse('http://13.65.191.65:9095/api/Inventarios/BuscarInventario/$tiendaId/$valor');
+     final resp = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+     if (resp.statusCode == 200) {
+      inventarios = [];
+      final inventariosMap = json.decode(resp.body);
+      final List<dynamic> listaInventario = inventariosMap['data'];
+      listaInventario.forEach((element) {
+        final tempInventario = Inventario.fromMap(element);
+        final noExiste = inventarios
+            .where((element) => element.id == tempInventario.id)
+            .isEmpty;
+        if (noExiste) {
+          inventarios.add(tempInventario);
+        }
+      });
+      isSearch = false;
+      notifyListeners();
+    }
+
+
+  }
+
+
 }

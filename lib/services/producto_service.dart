@@ -12,6 +12,7 @@ class ProductoService extends ChangeNotifier {
 
   bool isLoading = true;
   bool isSaving = false;
+  bool isSearch = false;
 
   ProductoService() {
     loadProductos();
@@ -48,8 +49,37 @@ class ProductoService extends ChangeNotifier {
     }
   }
 
+   filtarProductos(String valor) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = await storage.read(key: 'token');
+    final inventarioId = await prefs.getInt('Inventario');
+    isSearch = true;
+    productos = [];
+    notifyListeners();
+    final url = Uri.parse(
+        'http://13.65.191.65:9095/api/ProductosInventario/Buscar/$valor/$inventarioId');
+    final resp = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+    if (resp.statusCode == 200) {
+      final productoMap = json.decode(resp.body);
+      final List<dynamic> listaProductos = productoMap['data'];
+      listaProductos.forEach((element) {
+        final tempProducto = Producto.fromMap(element);
+        productos.add(tempProducto);
+      });
+      isSearch = false;
+      notifyListeners();
+    }
+    isSearch = false;
+    notifyListeners();
+  }
+
+
   Future<String> loadProducto(String codigo) async {
-    isLoading = true;
+    isSearch = true;
     notifyListeners();
     final token = await storage.read(key: 'token');
     final url =
@@ -63,16 +93,16 @@ class ProductoService extends ChangeNotifier {
       final productoMap = json.decode(resp.body);
       final data = productoMap['data'];
       if (data == null) {
-        isLoading = false;
+        isSearch = false;
         notifyListeners();
         return '';
       } else {
-        isLoading = false;
+        isSearch = false;
         notifyListeners();
         return data['descripcion'];
       }
     } else {
-      isLoading = false;
+      isSearch = false;
       notifyListeners();
       return '';
     }

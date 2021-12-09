@@ -36,43 +36,51 @@ class InventariosScreen extends StatelessWidget {
       ),
       body: RefreshIndicator(
         onRefresh: inventarioService.loadInventarios,
-        child: ListView.builder(
-          itemCount: inventarioService.inventarios.length,
-          itemBuilder: (BuildContext context, int index) => GestureDetector(
-            onLongPress: () {
-              inventarioService.selectedInventario =
-                  inventarioService.inventarios[index];
-              Navigator.pushNamed(context, 'inventario');
-            },
-            onDoubleTap: () async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              final correo = prefs.getString('Correo');
-              Navigator.pushNamed(context, 'correo', arguments: {
-                'correo': correo,
-                'inventarioId': inventarioService.inventarios[index].id
-              });
-            },
-            onTap: () async {
-              if (inventarioService.inventarios[index].activo!) {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                final uiProvider =
-                    Provider.of<UiProvider>(context, listen: false);
-                uiProvider.selectedMenuOpt = 0;
-                prefs.setInt(
-                    'Inventario', inventarioService.inventarios[index].id!);
-                movimientoService.loadMovimientos();
-                productoService.loadProductos();
-                Navigator.pushNamed(context, 'mov_index');
-              } else {
-                NotificationsService.showSnackbar(
-                  'Inventario cerrado',
-                  colorBg: Colors.yellow.shade700,
-                );
-              }
-            },
-            child: InventarioCard(
-                inventario: inventarioService.inventarios[index]),
-          ),
+        child: Column(
+          children: [
+           _SearchWidget(),
+          inventarioService.isSearch ? CircularProgressIndicator() :
+            Expanded(
+              child: ListView.builder(
+                itemCount: inventarioService.inventarios.length,
+                itemBuilder: (BuildContext context, int index) => GestureDetector(
+                  onLongPress: () {
+                    inventarioService.selectedInventario =
+                        inventarioService.inventarios[index];
+                    Navigator.pushNamed(context, 'inventario');
+                  },
+                  onDoubleTap: () async {
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    final correo = prefs.getString('Correo');
+                    Navigator.pushNamed(context, 'correo', arguments: {
+                      'correo': correo,
+                      'inventarioId': inventarioService.inventarios[index].id
+                    });
+                  },
+                  onTap: () async {
+                    if (inventarioService.inventarios[index].activo!) {
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      final uiProvider =
+                          Provider.of<UiProvider>(context, listen: false);
+                      uiProvider.selectedMenuOpt = 0;
+                      prefs.setInt(
+                          'Inventario', inventarioService.inventarios[index].id!);
+                      movimientoService.loadMovimientos();
+                      productoService.loadProductos();
+                      Navigator.pushNamed(context, 'mov_index');
+                    } else {
+                      NotificationsService.showSnackbar(
+                        'Inventario cerrado',
+                        colorBg: Colors.yellow.shade700,
+                      );
+                    }
+                  },
+                  child: InventarioCard(
+                      inventario: inventarioService.inventarios[index]),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -89,3 +97,54 @@ class InventariosScreen extends StatelessWidget {
     );
   }
 }
+
+class _SearchWidget extends StatefulWidget {
+  const _SearchWidget({ Key? key }) : super(key: key);
+
+  @override
+  State<_SearchWidget> createState() => _SearchWidgetState();
+}
+
+class _SearchWidgetState extends State<_SearchWidget> {
+  final _controller = TextEditingController();
+
+
+  @override
+  Widget build(BuildContext context) {
+       final inventarioService =
+        Provider.of<InventarioService>(context, listen: true);
+     
+    return Container(
+      height: 50,
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        border: Border.all(color: Colors.black26),
+      ),     
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: TextField(
+        controller: _controller,
+        onChanged: (value){
+        if(value.isEmpty){
+          inventarioService.loadInventarios();
+        }else{
+          inventarioService.filtrarInventarios(value);
+        }        
+        },
+        decoration: InputDecoration(
+           icon: const Icon(Icons.search, color: Colors.indigoAccent,),
+           suffixIcon: GestureDetector(
+              child: const Icon(Icons.close, color: Colors.indigoAccent,),
+              onTap: (){
+                _controller.clear();
+                inventarioService.loadInventarios();
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+           ),
+        ),    
+      ),  
+    );
+  }
+}
+

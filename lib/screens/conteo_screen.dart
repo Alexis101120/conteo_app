@@ -24,7 +24,7 @@ class ConteoScreen extends StatelessWidget {
   }
 }
 
-class _InventarioScreen extends StatelessWidget {
+class _InventarioScreen extends StatefulWidget {
   final MovimientoService movimientoService;
   final ProductoService productoService;
   const _InventarioScreen(
@@ -34,9 +34,32 @@ class _InventarioScreen extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<_InventarioScreen> createState() => _InventarioScreenState(movimientoService: movimientoService,productoService:productoService);
+}
+
+class _InventarioScreenState extends State<_InventarioScreen> {
+  final MovimientoService movimientoService;
+  final ProductoService productoService;
+
+  final TextEditingController _controller = new TextEditingController();
+  
+
+  _InventarioScreenState({ required this.movimientoService, required this.productoService});
+
+@override
+  void initState() {
+    super.initState();
+  }
+  
+  @override
   Widget build(BuildContext context) {
     final conteoForm = Provider.of<ConteoFormProvider>(context, listen: true);
     final movimiento = conteoForm.movimiento;
+
+    if(_controller.text == ''){
+        _controller.text = movimiento.descripcion!;
+    }
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Registro de inventario'),
@@ -58,6 +81,7 @@ class _InventarioScreen extends StatelessWidget {
                     ),
                     TextFormField(
                         initialValue: movimiento.codigo,
+                        autofocus: (movimiento.codigo == "" ? true : false),
                         onChanged: (value) => movimiento.codigo = value,
                         validator: (value) {
                           if (value == null || value.isEmpty)
@@ -74,18 +98,24 @@ class _InventarioScreen extends StatelessWidget {
                             hintText: 'Ingrese codigo',
                             labelText: 'Codigo',
                             labelStyle: const TextStyle(color: Colors.grey),
-                            suffixIcon: productoService.isLoading
+                            suffixIcon: widget.productoService.isSearch
                                 ? const CircularProgressIndicator()
                                 : IconButton(
                                     icon: const Icon(Icons.search_outlined),
-                                    onPressed: () async {},
+                                    onPressed: () async {
+                                    final res = await productoService.loadProducto(movimiento.codigo!);
+                                    _controller.text = res;
+                                      setState((){
+                                      });
+                                    },
                                   ),
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)))),
                     const SizedBox(height: 30),
                     TextFormField(
-                      autofocus: (movimiento.descripcion == "" ? true : false),
-                      initialValue: movimiento.descripcion,
+                      controller: _controller,
+                      autofocus: (movimiento.descripcion == "" && movimiento.codigo != "" ? true : false),
+                      //initialValue: movimiento.descripcion,
                       onChanged: (value) => movimiento.descripcion = value,
                       validator: (value) {
                         if (value == null || value.isEmpty)
@@ -131,20 +161,20 @@ class _InventarioScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: FloatingActionButton(
           elevation: 5.0,
-          child: movimientoService.isSaving
+          child: widget.movimientoService.isSaving
               ? const CircularProgressIndicator(color: Colors.white)
               : const Icon(Icons.save_outlined),
-          onPressed: movimientoService.isSaving
+          onPressed: widget.movimientoService.isSaving
               ? null
               : () async {
                   FocusScope.of(context).unfocus();
 
                   if (!conteoForm.isValidForm()) return;
-                  final resp = await movimientoService
+                  final resp = await widget.movimientoService
                       .crearOactualizarInventario(conteoForm.movimiento);
                   if (resp.success) {
-                    await movimientoService.loadMovimientos();
-                    await productoService.loadProductos();
+                    await widget.movimientoService.loadMovimientos();
+                    await widget.productoService.loadProductos();
                     await NotificationsService.showSnackbar(resp.mensaje,
                         colorBg: Colors.green.shade500);
                     Navigator.pop(context);

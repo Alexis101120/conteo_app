@@ -14,6 +14,7 @@ class MovimientoService extends ChangeNotifier {
 
   bool isLoading = true;
   bool isSaving = false;
+  bool isSearch = false;
 
   MovimientoService() {
     loadMovimientos();
@@ -145,5 +146,34 @@ class MovimientoService extends ChangeNotifier {
     } catch (e) {
       return Respuesta(false, '$e');
     }
+  }
+
+  filtarMovimientos(String valor) async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = await storage.read(key: 'token');
+    final inventarioId = await prefs.getInt('Inventario');
+    isSearch = true;
+    movimientos = [];
+    notifyListeners();
+    final url = Uri.parse(
+        'http://13.65.191.65:9095/api/Movimientos/Buscar/$valor/${inventarioId!}');
+    final resp = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+    if (resp.statusCode == 200) {
+      final movimientoMap = json.decode(resp.body);
+      final List<dynamic> listaMovimiento = movimientoMap['data'];
+      listaMovimiento.forEach((element) {
+        final tempMovimiento = Movimiento.fromMap(element);
+        movimientos.add(tempMovimiento);
+      });
+      isSearch = false;
+      notifyListeners();
+
+    }
+    isSearch = false;
+    notifyListeners();
   }
 }

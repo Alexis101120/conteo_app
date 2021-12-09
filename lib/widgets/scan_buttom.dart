@@ -32,7 +32,7 @@ class ScanButon extends StatelessWidget {
           movimientoService.selectedMovimiento = Movimiento(
               cantidad: 0,
               descripcion: descripcion,
-              codigo: (barcodeScanRes == -1) ? '' : barcodeScanRes);
+              codigo: (barcodeScanRes == -1 || barcodeScanRes == '-1') ? '' : barcodeScanRes);
           Navigator.pushNamed(context, 'conteo');
         } catch (e) {
           NotificationsService.showSnackbar(
