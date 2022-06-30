@@ -38,8 +38,8 @@ class InventariosScreen extends StatelessWidget {
         onRefresh: inventarioService.loadInventarios,
         child: Column(
           children: [
-           _SearchWidget(),
-          inventarioService.isSearch ? CircularProgressIndicator() :
+           const _SearchWidget(),
+          inventarioService.isSearch ? const CircularProgressIndicator() :
             Expanded(
               child: ListView.builder(
                 itemCount: inventarioService.inventarios.length,

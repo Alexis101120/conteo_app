@@ -30,7 +30,7 @@ class _InventarioScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registro de inventario'),
+        title: const Text('Registro de inventario'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -51,20 +51,21 @@ class _InventarioScreen extends StatelessWidget {
                       initialValue: inventario.nombre,
                       onChanged: (value) => inventario.nombre = value,
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'El nombre es obligatorio';
+                        }
                       },
                       decoration: InputDecorations.authInputDecoration(
                           hintText: 'Nombre de inventario',
                           labelText: 'Nombre:'),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     SwitchListTile.adaptive(
                         value: inventario.activo!,
-                        title: Text('Activo'),
+                        title: const Text('Activo'),
                         activeColor: Colors.indigo,
                         onChanged: inventarioForm.updateAvailability),
-                    SizedBox(height: 30)
+                    const SizedBox(height: 30)
                   ],
                 ),
               )),
@@ -72,12 +73,12 @@ class _InventarioScreen extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10.0),
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: FloatingActionButton(
           elevation: 5.0,
           child: inventarioService.isSaving
-              ? CircularProgressIndicator(color: Colors.white)
-              : Icon(Icons.save_outlined),
+              ? const CircularProgressIndicator(color: Colors.white)
+              : const Icon(Icons.save_outlined),
           onPressed: inventarioService.isSaving
               ? null
               : () async {
@@ -92,6 +93,7 @@ class _InventarioScreen extends StatelessWidget {
                   }else{
                     NotificationsService.showSnackbar(resp.mensaje, colorBg: Colors.red.shade400);
                   }
+                  
                   
                 },
         ),

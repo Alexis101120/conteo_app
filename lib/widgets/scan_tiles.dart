@@ -25,10 +25,11 @@ class ScanTiles extends StatelessWidget {
                   direction: DismissDirection.horizontal,
                   confirmDismiss: (DismissDirection direction) async {
                     return await showDialog(
+                      barrierDismissible: false,
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: const Text("Confirmación"),
+                          title: const Text("Eliminar movimiento"),
                           content: const Text(
                               "Deseas eliminar el movimiento? será afectado el conteo"),
                           actions: <Widget>[
