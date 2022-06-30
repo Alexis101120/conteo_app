@@ -10,6 +10,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final tiendaService = Provider.of<TiendaService>(context, listen: true);
     final authService = Provider.of<AuthService>(context, listen: false);
+    final inventarioService =
+        Provider.of<InventarioService>(context, listen: false);
 
     if (tiendaService.isLoading == true) {
       return const LoadingScreen();
@@ -36,6 +38,7 @@ class HomeScreen extends StatelessWidget {
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.setInt('Tienda', tiendaService.tiendas[index].id);
+                inventarioService.loadInventarios();
                 Navigator.pushNamed(context, 'inventarios');
               },
               child: TiendaCard(tienda: tiendaService.tiendas[index]),

@@ -1,5 +1,4 @@
 import 'package:conteo_app/providers/conteo_form_provider.dart';
-import 'package:conteo_app/providers/providers.dart';
 import 'package:conteo_app/services/services.dart';
 import 'package:conteo_app/ui/inputs_decorations.dart';
 import 'package:flutter/material.dart';
@@ -84,8 +83,9 @@ class _InventarioScreenState extends State<_InventarioScreen> {
                         autofocus: (movimiento.codigo == "" ? true : false),
                         onChanged: (value) => movimiento.codigo = value,
                         validator: (value) {
-                          if (value == null || value.isEmpty)
+                          if (value == null || value.isEmpty) {
                             return 'El codigo es obligatorio';
+                          }
                         },
                         decoration: InputDecoration(
                             enabledBorder: const UnderlineInputBorder(
@@ -118,8 +118,9 @@ class _InventarioScreenState extends State<_InventarioScreen> {
                       //initialValue: movimiento.descripcion,
                       onChanged: (value) => movimiento.descripcion = value,
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'La descripcion es obligatoria';
+                        }
                       },
                       decoration: InputDecorations.authInputDecoration(
                           hintText: 'Ingrese descripción',
